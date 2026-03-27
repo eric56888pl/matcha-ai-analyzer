@@ -43,7 +43,11 @@
   </div>
   
   <script>
-    // 前端不保存 API Key，改呼叫後端端點
+    // 前端不保存 API Key，改呼叫後端端點。
+    // Force using backend-served page instead of file:// to avoid fetch/CORS issues.
+    if (window.location.protocol === "file:") {
+      window.location.replace("http://localhost:3003/");
+    }
     const ANALYZE_API_URL = "/api/analyze";
 
     let currentLang = 'pl'; // 預設波蘭文
@@ -143,7 +147,12 @@
         // 檢查 API 是否回傳錯誤
         if (!response.ok) {
           console.error("API Error Details:", data);
-          throw new Error(data.error?.message || "API request failed");
+          const backendError =
+            (typeof data?.error === "string" && data.error) ||
+            data?.error?.message ||
+            data?.message ||
+            "API request failed";
+          throw new Error(backendError);
         }
 
         // 成功取得 AI 回覆
