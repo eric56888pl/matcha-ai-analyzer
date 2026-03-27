@@ -39,12 +39,11 @@
     </div>
     
     <div id="result" class="bg-white/80 p-6 rounded-xl shadow-inner text-[#133529] hidden text-left leading-relaxed">
-      </div>
+    </div>
   </div>
   
   <script>
-    // Frontend always calls same-origin backend endpoint.
-    // Works on Vercel and local server (http://localhost:<port>).
+    // 🟢 你的網頁現在只會去找你自己的後端大門，非常安全！
     const ANALYZE_API_URL = "/api/analyze";
 
     let currentLang = 'pl'; // 預設波蘭文
@@ -87,7 +86,7 @@
       }
     });
 
-    // 將圖片轉為 Base64 (AI 需要的格式)
+    // 將圖片轉為 Base64
     function fileToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -97,7 +96,7 @@
       });
     }
 
-    // AI 鑑定按鈕邏輯 (只有這一個 Event Listener！)
+    // AI 鑑定按鈕邏輯
     document.getElementById('grade-btn').addEventListener('click', async () => {
       const file = fileInput.files[0];
       const resultEl = document.getElementById('result');
@@ -129,11 +128,12 @@
              3. Verdict: Is this Ceremonial grade or Culinary grade?
              Keep it short, use bullet points, in English.`;
 
+        // 呼叫你的 Vercel 後端 API
         const response = await fetch(ANALYZE_API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            promptText,
+            promptText: promptText,
             mimeType: file.type,
             imageBase64: base64Img
           })
@@ -141,26 +141,20 @@
 
         const data = await response.json();
 
-        // 檢查 API 是否回傳錯誤
+        // 檢查後端是否回傳錯誤
         if (!response.ok) {
-          console.error("API Error Details:", data);
-          const backendError =
-            (typeof data?.error === "string" && data.error) ||
-            data?.error?.message ||
-            data?.message ||
-            "API request failed";
-          throw new Error(backendError);
+          console.error("Backend Error Details:", data);
+          throw new Error(data.error?.message || data.error || "Analysis failed at backend.");
         }
 
         // 成功取得 AI 回覆
         const aiReply = data.candidates[0].content.parts[0].text;
         
-        // 將 AI 回覆格式化並顯示在畫面上
+        // 將 AI 回覆顯示在畫面上
         resultEl.innerHTML = `<div class="whitespace-pre-wrap font-medium">${aiReply}</div>`;
 
       } catch (error) {
         console.error("Catch Error:", error);
-        // 如果報錯，把錯誤訊息印在畫面上，方便我們除錯！
         resultEl.innerHTML = `<div class='text-red-600 font-bold'>${uiText[currentLang].error}</div><div class='text-sm text-red-400 mt-2 text-xs overflow-auto'>${error.message}</div>`;
       } finally {
         gradeBtn.disabled = false;
