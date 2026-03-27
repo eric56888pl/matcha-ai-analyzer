@@ -13,9 +13,13 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    // ⚠️ 這裡改回最穩定的 1.5-flash
-    const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-1.5-flash"; 
+    // 取得並清理 API Key
+    let rawKey = process.env.GEMINI_API_KEY || "";
+    const GEMINI_API_KEY = rawKey.trim().replace(/^["']|["']$/g, '');
+    
+    // 🟢 關鍵修復：使用 Google 官方最新規定的模型名稱
+    const GEMINI_MODEL = "gemini-1.5-flash-latest"; 
+    
     const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
     if (!GEMINI_API_KEY) {
@@ -46,7 +50,6 @@ module.exports = async (req, res) => {
 
     const data = await response.json();
     
-    // 如果 Google API 回傳錯誤
     if (!response.ok) {
       return res.status(response.status).json({
         error: data?.error?.message || "Gemini 請求失敗",
