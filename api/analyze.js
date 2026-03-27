@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
     const GEMINI_API_KEY = rawKey.trim().replace(/^["']|["']$/g, '');
     
     // 🟢 關鍵修復：使用 Google 官方最新規定的模型名稱
-    const GEMINI_MODEL = "gemini-1.5-flash";
+    const GEMINI_MODEL = "gemini-2.0-flash";
     
     const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
