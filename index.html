@@ -112,7 +112,8 @@
         return;
       }
 
-      if (GEMINI_API_KEY === "AIzaSyDrBx4rbmzStuvnTIQl28HlM7tbtGGVxqA") {
+      const missingApiKey = !GEMINI_API_KEY || GEMINI_API_KEY.includes("AIzaSyDrBx4rbmzStuvnTIQl28HlM7tbtGGVxqA");
+      if (missingApiKey) {
         alert(currentLang === 'pl' ? "Brak klucza API!" : "API Key is missing!");
         return;
       }
