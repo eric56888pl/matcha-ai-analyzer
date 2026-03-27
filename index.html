@@ -6,281 +6,175 @@
   <title>Zen Photo Grader</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      background-color: #eae7de; /* 奶油白 */
-    }
+    body { background-color: #eae7de; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-start pt-12 bg-[#eae7de] text-[#133529]">
   <div class="w-full max-w-md mx-auto p-8 rounded-2xl shadow-lg bg-white/90" style="background-color: #eae7de;">
-    <!-- 語言切換區 -->
+    
     <div class="flex justify-end mb-8">
       <button id="lang-en" class="text-[#133529] border-2 border-[#133529] rounded-full px-4 py-1 mr-2 font-semibold hover:bg-[#133529] hover:text-[#eae7de] transition">EN</button>
       <button id="lang-pl" class="text-[#133529] border-2 border-[#133529] rounded-full px-4 py-1 font-semibold hover:bg-[#133529] hover:text-[#eae7de] transition">PL</button>
     </div>
     
-    <!-- 照片上傳區 -->
     <div class="mb-6">
-      <label id="upload-label" for="photo-upload" class="block mb-2 text-lg font-medium text-[#133529]">
-        Upload Photo
-      </label>
-      <div class="w-full flex items-center justify-center bg-[#eae7de] border-2 border-dashed border-[#133529] rounded-lg py-8">
+      <label id="upload-label" for="photo-upload" class="block mb-2 text-lg font-medium text-[#133529]">Upload Photo</label>
+      <div class="w-full flex items-center justify-center bg-[#eae7de] border-2 border-dashed border-[#133529] rounded-lg py-8 cursor-pointer hover:bg-[#dcd8cc] transition" id="drop-zone">
         <div>
           <input id="photo-upload" type="file" accept="image/*" class="hidden" />
-          <button id="select-photo"
-            class="bg-[#133529] text-[#eae7de] px-4 py-2 rounded-lg shadow hover:bg-[#254e35] transition font-semibold">
+          <button id="select-photo" class="bg-[#133529] text-[#eae7de] px-4 py-2 rounded-lg shadow hover:bg-[#254e35] transition font-semibold pointer-events-none">
             Select Image
           </button>
         </div>
       </div>
-      <div id="preview-container" class="mt-4 flex justify-center">
-        <!-- 預覽圖會出現在這裡 -->
+      <div id="preview-container" class="mt-4 flex justify-center hidden">
+        <img id="preview-img" class="max-h-48 rounded-xl object-cover shadow border-2 border-[#133529]" src="" alt="Preview">
       </div>
     </div>
     
-    <!-- 鑑定等級按鈕 -->
     <div class="flex justify-center mb-8">
-      <button id="grade-btn"
-        class="bg-[#133529] text-[#eae7de] text-lg px-8 py-3 rounded-full hover:bg-[#254e35] transition font-bold shadow">
+      <button id="grade-btn" class="bg-[#133529] text-[#eae7de] text-lg px-8 py-3 rounded-full hover:bg-[#254e35] transition font-bold shadow disabled:opacity-50">
         Grade
       </button>
     </div>
     
-    <!-- 鑑定結果顯示 -->
-    <div id="result" class="bg-white/80 p-6 rounded-xl shadow-inner text-[#133529] text-center space-y-2 hidden">
-      <div>
-        <span class="font-semibold" id="colorScore-label">Color Score:</span>
-        <span id="colorScore">-</span>
+    <div id="result" class="bg-white/80 p-6 rounded-xl shadow-inner text-[#133529] hidden text-left leading-relaxed">
       </div>
-      <div>
-        <span class="font-semibold" id="foam-label">Foam Fineness:</span>
-        <span id="foam">-</span>
-      </div>
-      <div>
-        <span class="font-semibold" id="usage-label">Recommended Use:</span>
-        <span id="usage">-</span>
-      </div>
-    </div>
   </div>
   
   <script>
-    // 多語內容
-    const i18n = {
-      en: {
-        uploadPhoto: 'Upload Photo',
-        selectImage: 'Select Image',
-        grade: 'Grade',
-        colorScore: 'Color Score:',
-        foam: 'Foam Fineness:',
-        usage: 'Recommended Use:',
-        results: [
-          { 
-            colorScore: '8.5 / 10', 
-            foam: 'Fine', 
-            usage: 'Matcha Latte' 
-          },
-          { 
-            colorScore: '9.0 / 10', 
-            foam: 'Very Fine', 
-            usage: 'Usucha' 
-          },
-          { 
-            colorScore: '7.5 / 10', 
-            foam: 'Medium', 
-            usage: 'Cooking' 
-          }
-        ]
-      },
-      pl: {
-        uploadPhoto: 'Załaduj zdjęcie',
-        selectImage: 'Wybierz zdjęcie',
-        grade: 'Oceń',
-        colorScore: 'Ocena koloru:',
-        foam: 'Subtelność piany:',
-        usage: 'Zalecane zastosowanie:',
-        results: [
-          { 
-            colorScore: '8.5 / 10', 
-            foam: 'Drobna', 
-            usage: 'Matcha Latte' 
-          },
-          { 
-            colorScore: '9.0 / 10', 
-            foam: 'Bardzo drobna', 
-            usage: 'Usucha' 
-          },
-          { 
-            colorScore: '7.5 / 10', 
-            foam: 'Średnia', 
-            usage: 'Gotowanie' 
-          }
-        ]
-      }
+    // ==========================================
+    // ⚠️ 請在這裡貼上你「新申請的」 API Key ⚠️
+    // ==========================================
+    const GEMINI_API_KEY = "AIzaSyDrBx4rbmzStuvnTIQl28HlM7tbtGGVxqA"; 
+    
+    // 使用更穩定的 v1beta 端點
+    const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+
+    let currentLang = 'pl'; // 預設波蘭文
+
+    // 介面文字切換
+    const uiText = {
+      en: { upload: 'Upload Photo', select: 'Select Image', grade: 'Analyze Matcha', loading: 'AI is analyzing...', error: 'Analysis failed. Check console for details.', noFile: 'Please upload an image first.' },
+      pl: { upload: 'Załaduj zdjęcie', select: 'Wybierz zdjęcie', grade: 'Oceń Matchę', loading: 'AI analizuje...', error: 'Nie udało się przeanalizować. Sprawdź konsolę.', noFile: 'Proszę najpierw załadować zdjęcie.' }
     };
 
-    let lang = 'en';
+    function updateUI() {
+      document.getElementById('upload-label').textContent = uiText[currentLang].upload;
+      document.getElementById('select-photo').textContent = uiText[currentLang].select;
+      document.getElementById('grade-btn').textContent = uiText[currentLang].grade;
+      
+      document.getElementById('lang-en').classList.toggle('bg-[#133529]', currentLang === 'en');
+      document.getElementById('lang-en').classList.toggle('text-[#eae7de]', currentLang === 'en');
+      document.getElementById('lang-pl').classList.toggle('bg-[#133529]', currentLang === 'pl');
+      document.getElementById('lang-pl').classList.toggle('text-[#eae7de]', currentLang === 'pl');
+    }
 
-    const setLang = (newLang) => {
-      lang = newLang;
-      document.getElementById('lang-en').classList.toggle('bg-[#133529]', lang === 'en');
-      document.getElementById('lang-en').classList.toggle('text-[#eae7de]', lang === 'en');
-      document.getElementById('lang-pl').classList.toggle('bg-[#133529]', lang === 'pl');
-      document.getElementById('lang-pl').classList.toggle('text-[#eae7de]', lang === 'pl');
-      document.getElementById('upload-label').textContent = i18n[lang].uploadPhoto;
-      document.getElementById('select-photo').textContent = i18n[lang].selectImage;
-      document.getElementById('grade-btn').textContent = i18n[lang].grade;
-      document.getElementById('colorScore-label').textContent = i18n[lang].colorScore;
-      document.getElementById('foam-label').textContent = i18n[lang].foam;
-      document.getElementById('usage-label').textContent = i18n[lang].usage;
-    };
+    document.getElementById('lang-en').addEventListener('click', () => { currentLang = 'en'; updateUI(); });
+    document.getElementById('lang-pl').addEventListener('click', () => { currentLang = 'pl'; updateUI(); });
+    updateUI();
 
-    document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
-    document.getElementById('lang-pl').addEventListener('click', () => setLang('pl'));
+    // 圖片上傳與預覽
+    const fileInput = document.getElementById('photo-upload');
+    const dropZone = document.getElementById('drop-zone');
+    const previewContainer = document.getElementById('preview-container');
+    const previewImg = document.getElementById('preview-img');
 
-    // 選擇圖片
-    document.getElementById('select-photo').addEventListener('click', () => {
-      document.getElementById('photo-upload').click();
-    });
+    dropZone.addEventListener('click', () => fileInput.click());
 
-    document.getElementById('photo-upload').addEventListener('change', (e) => {
+    fileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
-      const preview = document.getElementById('preview-container');
-      preview.innerHTML = '';
       if (file && file.type.startsWith('image/')) {
-        const img = document.createElement('img');
-        img.className = "max-h-48 rounded-xl object-contain shadow";
-        img.src = URL.createObjectURL(file);
-        preview.appendChild(img);
+        previewImg.src = URL.createObjectURL(file);
+        previewContainer.classList.remove('hidden');
+        document.getElementById('result').classList.add('hidden'); // 換照片時隱藏舊結果
       }
     });
 
-    // 鑑定按鈕
-    document.getElementById('grade-btn').addEventListener('click', () => {
-      // 簡單模擬: 有檔就顯示隨機結果
-      const file = document.getElementById('photo-upload').files[0];
-      const result = document.getElementById('result');
+    // 將圖片轉為 Base64 (AI 需要的格式)
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // AI 鑑定按鈕邏輯 (只有這一個 Event Listener！)
+    document.getElementById('grade-btn').addEventListener('click', async () => {
+      const file = fileInput.files[0];
+      const resultEl = document.getElementById('result');
+      const gradeBtn = document.getElementById('grade-btn');
+
       if (!file) {
-        result.classList.add('hidden');
-        alert(lang === 'pl' ? 'Proszę załadować zdjęcie.' : 'Please upload a photo first.');
+        alert(uiText[currentLang].noFile);
         return;
       }
-      // 隨機選一種結果
-      const idx = Math.floor(Math.random() * i18n[lang].results.length);
-      const grade = i18n[lang].results[idx];
-      document.getElementById('colorScore').textContent = grade.colorScore;
-      document.getElementById('foam').textContent = grade.foam;
-      document.getElementById('usage').textContent = grade.usage;
-      result.classList.remove('hidden');
-    });
 
-    // 預設語言
-    setLang('en');
+      if (GEMINI_API_KEY === "AIzaSyDrBx4rbmzStuvnTIQl28HlM7tbtGGVxqA") {
+        alert(currentLang === 'pl' ? "Brak klucza API!" : "API Key is missing!");
+        return;
+      }
+
+      // UI 進入載入狀態
+      resultEl.classList.remove('hidden');
+      resultEl.innerHTML = `<div class='text-center animate-pulse font-bold'>🍵 ${uiText[currentLang].loading}</div>`;
+      gradeBtn.disabled = true;
+
+      try {
+        const base64Img = await fileToBase64(file);
+        
+        // 根據選擇的語言發送不同的 Prompt
+        const promptText = currentLang === 'pl' 
+          ? `Jesteś ekspertem od japońskiej herbaty matcha. Przeanalizuj to zdjęcie:
+             1. Oceń kolor (1-10, im żywszy zielony, tym wyżej).
+             2. Oceń piankę (jeśli widoczna).
+             3. Podaj werdykt: czy to jakość ceremonialna (do picia), czy kulinarna (do wypieków).
+             Odpowiedz krótko, używając wypunktowań, w języku polskim.`
+          : `You are a Japanese matcha expert. Analyze this photo:
+             1. Score the color (1-10, brighter green is higher).
+             2. Assess the foam (if visible).
+             3. Verdict: Is this Ceremonial grade or Culinary grade?
+             Keep it short, use bullet points, in English.`;
+
+        const requestBody = {
+          contents: [{
+            parts: [
+              { text: promptText },
+              { inlineData: { mimeType: file.type, data: base64Img } }
+            ]
+          }]
+        };
+
+        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestBody)
+        });
+
+        const data = await response.json();
+
+        // 檢查 API 是否回傳錯誤
+        if (!response.ok) {
+          console.error("API Error Details:", data);
+          throw new Error(data.error?.message || "API request failed");
+        }
+
+        // 成功取得 AI 回覆
+        const aiReply = data.candidates[0].content.parts[0].text;
+        
+        // 將 AI 回覆格式化並顯示在畫面上
+        resultEl.innerHTML = `<div class="whitespace-pre-wrap font-medium">${aiReply}</div>`;
+
+      } catch (error) {
+        console.error("Catch Error:", error);
+        // 如果報錯，把錯誤訊息印在畫面上，方便我們除錯！
+        resultEl.innerHTML = `<div class='text-red-600 font-bold'>${uiText[currentLang].error}</div><div class='text-sm text-red-400 mt-2 text-xs overflow-auto'>${error.message}</div>`;
+      } finally {
+        gradeBtn.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>
-<script>
-  // === Gemini 1.5 Flash API 設定 ===
-  const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent";
-  const GEMINI_API_KEY = "AIzaSyAKAzRi3zLRsSnwR65CqMR5L1cuw4BOFTU"; // <--- 請在這裡貼上你的 API Key
-
-  // 將 File 物件轉成 base64
-  function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result.split(',')[1]);
-      reader.onerror = error => reject(error);
-      reader.readAsDataURL(file);
-    });
-  }
-
-  // 波蘭文 prompt 樣板
-  function buildPrompt() {
-    return `
-Przeanalizuj przesłane zdjęcie matchy na podstawie następujących kryteriów:
-
-1. Kolor (w skali 1-10, im bardziej zielony, tym wyższa ocena).
-2. Tekstura piany (wpisz: "Drobna" lub "Gruba").
-3. Zalecane zastosowanie (wybierz: "Ceremonia herbaciana", "Matcha Latte" lub "Do wypieków").
-
-Odpowiedz wyłącznie po polsku i podaj wyniki wg poniższego szablonu:
-
-Wynik oceny:
-- Wynik koloru: [tutaj wpisz liczbę (1-10)]
-- Piana: [Drobna/Gruba]
-- Zalecane zastosowanie: [Ceremonia herbaciana/Matcha Latte/Do wypieków]
-`;
-  }
-
-  // 用 Gemini API 做照片鑑定
-  async function analyzePhotoWithGemini(file) {
-    const base64Img = await fileToBase64(file);
-
-    const requestBody = {
-      contents: [
-        {
-          parts: [
-            {
-              text: buildPrompt()
-            },
-            {
-              inlineData: {
-                mimeType: file.type,
-                data: base64Img
-              }
-            }
-          ]
-        }
-      ]
-    };
-
-    const resp = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(requestBody)
-    });
-
-    if (!resp.ok) throw new Error("Błąd podczas analizy zdjęcia");
-
-    const data = await resp.json();
-    // content.parts[0].text
-    if (
-      data &&
-      data.candidates &&
-      data.candidates[0] &&
-      data.candidates[0].content &&
-      data.candidates[0].content.parts &&
-      data.candidates[0].content.parts[0].text
-    ) {
-      return data.candidates[0].content.parts[0].text;
-    } else {
-      throw new Error("Brak odpowiedzi z Gemini API.");
-    }
-  }
-
-  // 改寫鑑定按鈕事件
-  document.getElementById('grade-btn').addEventListener('click', async () => {
-    const file = document.getElementById('photo-upload').files[0];
-    const resultEl = document.getElementById('result');
-    if (!file) {
-      resultEl.classList.add('hidden');
-      alert('Proszę załadować zdjęcie.');
-      return;
-    }
-
-    // 清空舊的結果&顯示載入中訊息
-    resultEl.classList.remove('hidden');
-    resultEl.innerHTML = "<div class='text-center text-gray-700'>Analizuję... Proszę czekać.</div>";
-
-    try {
-      const plResult = await analyzePhotoWithGemini(file);
-      resultEl.innerHTML = `<pre class="whitespace-pre-wrap text-left">${plResult}</pre>`;
-    } catch (e) {
-      resultEl.innerHTML = "<span class='text-red-500'>Nie udało się przeanalizować zdjęcia. Spróbuj ponownie później.</span>";
-    }
-  }, { once: true }); // 替換原來的事件處理器，只掛載一次
-
-  // 若原本自動掛載了 setLang，改為手動設置
-  setLang('pl');
-</script>
