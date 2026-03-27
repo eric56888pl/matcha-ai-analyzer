@@ -13,13 +13,13 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // 🚨 防呆裝甲啟動：自動清除 Vercel 環境變數中不小心混入的空白鍵或雙引號！
+    // 取得並清理 API Key
     let rawKey = process.env.GEMINI_API_KEY || "";
     const GEMINI_API_KEY = rawKey.trim().replace(/^["']|["']$/g, '');
     
-    let rawModel = process.env.GEMINI_MODEL || "gemini-1.5-flash";
-    const GEMINI_MODEL = rawModel.trim().replace(/^["']|["']$/g, '');
-
+    // 🟢 關鍵修復：使用 Google 官方最新規定的模型名稱
+    const GEMINI_MODEL = "gemini-1.5-flash-latest"; 
+    
     const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
     if (!GEMINI_API_KEY) {
@@ -50,7 +50,6 @@ module.exports = async (req, res) => {
 
     const data = await response.json();
     
-    // 如果 Google API 回傳錯誤
     if (!response.ok) {
       return res.status(response.status).json({
         error: data?.error?.message || "Gemini 請求失敗",
@@ -58,7 +57,6 @@ module.exports = async (req, res) => {
       });
     }
 
-    // 成功回傳結果給前端
     return res.status(200).json(data);
   } catch (error) {
     return res.status(500).json({ error: error.message || "伺服器發生未知錯誤" });
