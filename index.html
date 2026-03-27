@@ -8,28 +8,27 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500;900&display=swap" rel="stylesheet">
   <style>
     body {
-      background-color: #f8f5f0; /* Washi background */
+      background-color: #f8f5f0;
       font-family: 'Noto Sans JP', sans-serif;
       color: #2d463e;
       overflow-x: hidden;
       position: relative;
     }
 
-    /* Zen Fade-in */
     .fade-in { animation: fadeIn 1.5s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* ✨ Updated Sakura Rain: Now Pink and Visible ✨ */
+    /* Sakura Rain */
     .sakura {
       position: fixed; 
       top: -10%; 
-      background: #ffb7c5; /* Classic Cherry Blossom Pink */
+      background: #ffb7c5; 
       border-radius: 100% 0 100% 100%;
-      opacity: 0.6; /* Increased visibility */
+      opacity: 0.6; 
       pointer-events: none; 
       z-index: 0; 
       animation: fall linear infinite;
-      box-shadow: 0 0 5px rgba(255, 183, 197, 0.3); /* Soft glow */
+      box-shadow: 0 0 5px rgba(255, 183, 197, 0.3); 
     }
     @keyframes fall {
       0% { transform: translateY(0) rotate(0deg); }
@@ -59,9 +58,6 @@
   <div class="sakura" style="width:10px;height:14px;left:85%;animation-duration:9s;animation-delay:4s;"></div>
   <div class="sakura" style="width:13px;height:17px;left:75%;animation-duration:13s;animation-delay:2.5s;"></div>
   <div class="sakura" style="width:9px;height:13px;left:95%;animation-duration:10s;animation-delay:7s;"></div>
-  <div class="sakura" style="width:11px;height:15px;left:20%;animation-duration:10s;animation-delay:8s;"></div>
-  <div class="sakura" style="width:7px;height:11px;left:80%;animation-duration:11s;animation-delay:0.2s;"></div>
-  <div class="sakura" style="width:10px;height:14px;left:60%;animation-duration:14s;animation-delay:3.5s;"></div>
 
   <div class="fixed top-6 right-6 z-50 flex gap-2">
     <button id="btn-en" onclick="setLanguage('en')" class="px-3 py-1 text-xs font-bold border border-[#2d463e] rounded hover:bg-[#2d463e] hover:text-white transition-all">EN</button>
@@ -70,8 +66,7 @@
 
   <header class="w-full max-w-4xl pt-20 pb-12 px-6 text-center fade-in">
     <div class="relative inline-block mb-8">
-      <img src="https://images.unsplash.com/photo-1515696955266-4f67e13219e8?q=80&w=600&auto=format&fit=crop" 
-           alt="Matcha" class="w-40 h-40 object-cover rounded-full shadow-2xl border-4 border-white">
+      <img src="https://images.unsplash.com/photo-1515696955266-4f67e13219e8?q=80&w=600&auto=format&fit=crop" alt="Matcha" class="w-40 h-40 object-cover rounded-full shadow-2xl border-4 border-white">
     </div>
     <h1 id="ui-title" class="text-4xl md:text-5xl font-black tracking-tighter mb-4 text-[#2d463e]">Zen Matcha Analyzer</h1>
     <p id="ui-subtitle" class="text-sm uppercase tracking-[0.3em] opacity-60">Purity • Tradition • Intelligence</p>
@@ -89,7 +84,7 @@
       </div>
 
       <div id="preview-container" class="mt-8 hidden w-full flex justify-center bg-[#f8f5f0] p-2 rounded-sm border border-[#e5e1d8]">
-        <img id="preview-img" class="w-full max-h-[50vh] object-contain rounded-sm grayscale-[20%] hover:grayscale-0 transition-all">
+        <img id="preview-img" class="w-full max-h-[40vh] object-contain rounded-sm grayscale-[20%] hover:grayscale-0 transition-all">
       </div>
 
       <button id="grade-btn" class="w-full mt-8 bg-[#2d463e] text-[#f8f5f0] py-4 text-sm tracking-[0.2em] font-bold hover:bg-[#1d2f29] transition-all disabled:opacity-50 z-20 relative">
@@ -106,13 +101,13 @@
     const translations = {
       en: {
         title: "Zen Matcha Analyzer", subtitle: "Purity • Tradition • Intelligence", upload: "Select Matcha Photo",
-        btn: "ANALYZE QUALITY", loading: "Consulting the Master...", error: "The connection failed. Please try again.",
+        btn: "ANALYZE QUALITY", loading: "Consulting the Master...", error: "Connection Error",
         noFile: "Please select a photo first.",
         prompt: "Act as a Japanese tea master. Analyze the color and foam of this matcha. Tell me if it's Ceremonial or Culinary grade. Keep it concise in English using bullet points."
       },
       pl: {
         title: "Zen Matcha Analyzer", subtitle: "Czystość • Tradycja • Inteligencja", upload: "Wybierz zdjęcie Matchy",
-        btn: "OCEŃ JAKOŚĆ", loading: "Konsultacja z Mistrzem...", error: "Błąd połączenia. Spróbuj ponownie.",
+        btn: "OCEŃ JAKOŚĆ", loading: "Konsultacja z Mistrzem...", error: "Błąd połączenia",
         noFile: "Najpierw wybierz zdjęcie.",
         prompt: "Działaj jako japoński mistrz herbaty. Przeanalizuj kolor i piankę tej matchy. Powiedz mi, czy to jakość ceremonialna czy kulinarna. Odpowiedz zwięźle w języku polskim, używając wypunktowań."
       }
@@ -144,6 +139,7 @@
       if (file) {
         document.getElementById('preview-img').src = URL.createObjectURL(file);
         document.getElementById('preview-container').classList.remove('hidden');
+        document.getElementById('result').classList.add('hidden');
       }
     };
 
@@ -178,13 +174,24 @@
         });
 
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error);
+        
+        // 🚨 如果有錯誤，把真實的系統報錯丟給 Catch 區塊
+        if (!response.ok) {
+           throw new Error(data.error || data.details?.message || "Unknown backend error");
+        }
 
         aiContent.innerHTML = `<div class="fade-in">${data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>')}</div>`;
         resultDiv.classList.remove('hidden');
 
       } catch (err) {
-        aiContent.innerHTML = `<span class="text-red-800">${translations[currentLang].error}</span>`;
+        // 🟢 這裡會把真實死因用明顯的紅色框框印在畫面上！
+        console.error("Full error:", err);
+        aiContent.innerHTML = `
+          <div class="text-red-700 font-bold mb-3">❌ ${translations[currentLang].error}</div>
+          <div class="text-xs bg-red-50 p-4 rounded border border-red-200 text-red-800 break-words font-mono">
+            <strong>System Log:</strong><br>${err.message}
+          </div>
+        `;
         resultDiv.classList.remove('hidden');
       } finally {
         btn.disabled = false;
