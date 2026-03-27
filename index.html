@@ -43,11 +43,8 @@
   </div>
   
   <script>
-    // 前端不保存 API Key，改呼叫後端端點。
-    // Force using backend-served page instead of file:// to avoid fetch/CORS issues.
-    if (window.location.protocol === "file:") {
-      window.location.replace("http://localhost:3003/");
-    }
+    // Frontend always calls same-origin backend endpoint.
+    // Works on Vercel and local server (http://localhost:<port>).
     const ANALYZE_API_URL = "/api/analyze";
 
     let currentLang = 'pl'; // 預設波蘭文
