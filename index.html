@@ -43,13 +43,8 @@
   </div>
   
   <script>
-    // ==========================================
-    // ⚠️ 請在這裡貼上你「新申請的」 API Key ⚠️
-    // ==========================================
-    const GEMINI_API_KEY = "AIzaSyDrBx4rbmzStuvnTIQl28HlM7tbtGGVxqA";
-    
-    // 使用更穩定的 v1beta 端點
-    const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+    // 前端不保存 API Key，改呼叫後端端點
+    const ANALYZE_API_URL = "/api/analyze";
 
     let currentLang = 'pl'; // 預設波蘭文
 
@@ -112,15 +107,6 @@
         return;
       }
 
-      const missingApiKey =
-        !GEMINI_API_KEY ||
-        GEMINI_API_KEY.trim() === "" ||
-        GEMINI_API_KEY.includes("AIzaSyDrBx4rbmzStuvnTIQl28HlM7tbtGGVxqA");
-      if (missingApiKey) {
-        alert(currentLang === 'pl' ? "Brak klucza API!" : "API Key is missing!");
-        return;
-      }
-
       // UI 進入載入狀態
       resultEl.classList.remove('hidden');
       resultEl.innerHTML = `<div class='text-center animate-pulse font-bold'>🍵 ${uiText[currentLang].loading}</div>`;
@@ -142,19 +128,14 @@
              3. Verdict: Is this Ceremonial grade or Culinary grade?
              Keep it short, use bullet points, in English.`;
 
-        const requestBody = {
-          contents: [{
-            parts: [
-              { text: promptText },
-              { inlineData: { mimeType: file.type, data: base64Img } }
-            ]
-          }]
-        };
-
-        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+        const response = await fetch(ANALYZE_API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestBody)
+          body: JSON.stringify({
+            promptText,
+            mimeType: file.type,
+            imageBase64: base64Img
+          })
         });
 
         const data = await response.json();
