@@ -10,16 +10,15 @@ module.exports = async (req, res) => {
     let rawKey = process.env.GEMINI_API_KEY || "";
     const GEMINI_API_KEY = rawKey.trim().replace(/^["']|["']$/g, '');
     
-    // 🟢 使用 1.5 Flash，這是在綁卡後最穩定且便宜的模型
-    const GEMINI_MODEL = "gemini-1.5-flash";
-    
-    // 🟢 使用 v1beta，因為它目前對 1.5 Flash 的支援度最廣
+    // 🟢 終極殺手鐧：直接使用最強大的 Pro 旗艦模型
+    const GEMINI_MODEL = "gemini-1.5-pro";
     const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
     if (!GEMINI_API_KEY) return res.status(500).json({ error: "API Key Missing." });
 
     const { promptText, mimeType, imageBase64 } = req.body || {};
-    
+    if (!promptText || !mimeType || !imageBase64) return res.status(400).json({ error: "未接收到照片。" });
+
     const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
