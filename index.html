@@ -75,32 +75,40 @@
   <script>
     const translations = {
       en: {
-        title: "Zen Matcha Analyzer", subtitle: "Purity • Truth • Strictness", upload: "Select Photo", btn: "ANALYZE QUALITY", error: "Connection Error", noFile: "Select a photo.",
-        loadingQuotes: ["Ichi-go Ichi-e. One moment, one encounter.", "Scanning for vibrant jade powder...", "Checking opacity and suspension...", "Verifying if this is true Matcha...", "Analyzing froth density..."],
-        prompt: `You are an extremely strict Japanese Matcha Sommelier. 
-                 STEP 1: IDENTITY CHECK. (Matcha powder or opaque suspension?)
+        title: "Zen Matcha Analyzer", subtitle: "Purity • Truth • Intelligence", upload: "Select Photo", btn: "ANALYZE QUALITY", error: "Connection Error", noFile: "Select a photo.",
+        loadingQuotes: ["Ichi-go Ichi-e.", "Seeking the vibrant green...", "Checking opacity...", "Verifying leaf powder..."],
+        prompt: `You are an extremely strict Japanese Matcha Sommelier.
+                 STEP 1: IDENTITY CHECK. Look closely at the image.
+                 - If the liquid is CLEAR or TRANSLUCENT (you can see through it, like steeped Sencha or tea bags), STOP IMMEDIATELY and say: "This is steeped Green Tea. I only analyze opaque Matcha suspension or powder."
+                 - If it is RED/BROWN (black tea/coffee) or not tea, STOP and reject it.
+                 - Proceed ONLY IF it is a vibrant green DRY POWDER or an OPAQUE, cloudy green liquid suspension.
                  STEP 2: ANALYSIS.
-                 - COLOR Score: X/10 (10=Electric Jade, 1=Dull Yellow).
+                 - COLOR Score: X/10 (10=Electric Jade, 1=Dull Yellowish).
                  - QUALITY Score: X/10 (10=Fine powder/Micro-bubbles, 1=Grainy/Soapy).
-                 STEP 3: VERDICT CATEGORY:
+                 STEP 3: VERDICT CATEGORY.
                  - 9-10: [TOP CEREMONIAL] Rare masterpiece quality.
                  - 7-8: [PREMIUM DAILY] High-quality tea, fit for casual ceremony.
                  - 5-6: [STANDARD] Good for lattes or daily drinking.
-                 - BELOW 5: [CULINARY] Strictly for baking only. 
-                 Be honest but distinguish clearly between 'High Quality Daily' and 'Culinary'.`
+                 - BELOW 5: [CULINARY] Strictly for baking only.
+                 Be honest and justify your score.`
       },
       pl: {
-        title: "Zen Matcha Analyzer", subtitle: "Czystość • Prawda • Surowość", upload: "Wybierz zdjęcie", btn: "OCEŃ JAKOŚĆ", error: "Błąd połączenia", noFile: "Wybierz zdjęcie.",
-        loadingQuotes: ["Ichi-go Ichi-e. Jedna chwila, jedno spotkanie.", "Szukanie żywego, nefrytowego proszku...", "Sprawdzanie mętności i zawiesiny...", "Weryfikacja autentyczności Matchy...", "Analizowanie gęstości pianki..."],
+        title: "Zen Matcha Analyzer", subtitle: "Czystość • Prawda • Inteligencja", upload: "Wybierz zdjęcie", btn: "OCEŃ JAKOŚĆ", error: "Błąd połączenia", noFile: "Wybierz zdjęcie.",
+        loadingQuotes: ["Ichi-go Ichi-e.", "Szukanie żywej zieleni...", "Sprawdzanie mętności...", "Weryfikacja proszku liściastego..."],
         prompt: `Jesteś niezwykle surowym japońskim sommelierem Matchy.
-                 KROK 1: IDENTYFIKACJA SUBSTANCJI.
-                 - Czy to zielona, NIEPRZEZROCZYSTA (mętna) zawiesina? (Matcha płynna)
-                 - Czy to żywo zielony, DROBNY proszek? (Matcha w proszku)
-                 - Jeśli płyn jest KLAROWNY/PRZEZROCZYSTY (jak Sencha/herbata z torebki) lub CZERWONY/BRĄZOWY (Czarna herbata/Kawa), ZATRZYMAJ SIĘ i powiedz: "To nie jest Matcha. Mistrz ocenia tylko prawdziwą sproszkowaną Matchę."
-                 KROK 2: JEŚLI ZWERYFIKOWANO, oceń:
-                 - KOLOR (1-10): "Wynik KOLORU: X/10". Bądź brutalny. 10 = Żywa zieleń, 1 = Żółtawy/Przezroczysty.
-                 - PIANKA/TEKSTURA (1-10): "Wynik JAKOŚCI: X/10". Mikropęcherzyki lub drobny proszek = 10.
-                 KROK 3: WERDYKT. Bądź szczery. Jeśli to jakość kulinarna, wyjaśnij dlaczego nie nadaje się do ceremonii.`
+                 KROK 1: KONTROLA TOŻSAMOŚCI. Przyjrzyj się uważnie.
+                 - Jeśli płyn jest KLAROWNY lub PRZEZROCZYSTY (jak parzona Sencha), ZATRZYMAJ SIĘ i powiedz: "To jest parzona zielona herbata. Oceniam tylko mętną zawiesinę Matchy lub proszek."
+                 - Jeśli to czerwony/brązowy płyn (kawa/czarna herbata) lub nie herbata, ZATRZYMAJ SIĘ i odrzuć.
+                 - Kontynuuj TYLKO, jeśli to żywo zielony SUCHY PROSZEK lub NIEPRZEZROCZYSTA, mętna zielona zawiesina.
+                 KROK 2: ANALIZA.
+                 - Wynik KOLORU: X/10 (10=Żywy nefryt, 1=Matowy/Żółtawy).
+                 - Wynik JAKOŚCI: X/10 (10=Drobny proszek/Mikropęcherzyki, 1=Ziarnisty/Mydlany).
+                 KROK 3: KATEGORIA WERDYKTU.
+                 - 9-10: [TOP CEREMONIALNA] Rzadkie arcydzieło.
+                 - 7-8: [PREMIUM CODZIENNA] Wysoka jakość, idealna na co dzień.
+                 - 5-6: [STANDARDOWA] Dobra do latte lub picia na co dzień.
+                 - PONIŻEJ 5: [KULINARNA] Wyłącznie do wypieków.
+                 Bądź szczery i uzasadnij swoją ocenę.`
       }
     };
 
