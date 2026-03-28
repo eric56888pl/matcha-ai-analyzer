@@ -3,39 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Zen Matcha Analyzer</title>
+  <title>Zen Matcha Master Analyzer</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500;900&display=swap" rel="stylesheet">
   <style>
     body {
-      background-color: #f8f5f0;
+      background-color: #f8f5f0; 
       font-family: 'Noto Sans JP', sans-serif;
       color: #2d463e;
       overflow-x: hidden;
       position: relative;
     }
-
     .fade-in { animation: fadeIn 1.5s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Sakura Rain */
+    /* 🌸 櫻花粉色雨 🌸 */
     .sakura {
-      position: fixed; 
-      top: -10%; 
-      background: #ffb7c5; 
-      border-radius: 100% 0 100% 100%;
-      opacity: 0.6; 
-      pointer-events: none; 
-      z-index: 0; 
-      animation: fall linear infinite;
-      box-shadow: 0 0 5px rgba(255, 183, 197, 0.3); 
+      position: fixed; top: -10%; background: #ffb7c5; 
+      border-radius: 100% 0 100% 100%; opacity: 0.6; 
+      pointer-events: none; z-index: 0; animation: fall linear infinite;
+      box-shadow: 0 0 5px rgba(255, 183, 197, 0.3);
     }
-    @keyframes fall {
-      0% { transform: translateY(0) rotate(0deg); }
-      100% { transform: translateY(110vh) rotate(720deg); }
-    }
+    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
 
-    /* Progress Loader */
     .loader {
       border: 2px solid #e5e7eb; border-top: 2px solid #2d463e;
       border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite;
@@ -47,29 +37,25 @@
 <body class="min-h-screen flex flex-col items-center">
 
   <div class="sakura" style="width:10px;height:14px;left:5%;animation-duration:8s;"></div>
-  <div class="sakura" style="width:8px;height:12px;left:15%;animation-duration:11s;animation-delay:5s;"></div>
   <div class="sakura" style="width:12px;height:16px;left:25%;animation-duration:12s;animation-delay:1s;"></div>
-  <div class="sakura" style="width:9px;height:13px;left:10%;animation-duration:16s;animation-delay:1.5s;"></div>
   <div class="sakura" style="width:8px;height:12px;left:45%;animation-duration:10s;animation-delay:3s;"></div>
-  <div class="sakura" style="width:11px;height:15px;left:35%;animation-duration:14s;animation-delay:0.5s;"></div>
-  <div class="sakura" style="width:7px;height:11px;left:55%;animation-duration:9s;animation-delay:6s;"></div>
-  <div class="sakura" style="width:12px;height:16px;left:50%;animation-duration:12s;animation-delay:4s;"></div>
   <div class="sakura" style="width:14px;height:18px;left:65%;animation-duration:15s;animation-delay:2s;"></div>
   <div class="sakura" style="width:10px;height:14px;left:85%;animation-duration:9s;animation-delay:4s;"></div>
-  <div class="sakura" style="width:13px;height:17px;left:75%;animation-duration:13s;animation-delay:2.5s;"></div>
+  <div class="sakura" style="width:11px;height:15px;left:15%;animation-duration:14s;animation-delay:0.5s;"></div>
   <div class="sakura" style="width:9px;height:13px;left:95%;animation-duration:10s;animation-delay:7s;"></div>
 
-  <div class="fixed top-6 right-6 z-50 flex gap-2">
-    <button id="btn-en" onclick="setLanguage('en')" class="px-3 py-1 text-xs font-bold border border-[#2d463e] rounded hover:bg-[#2d463e] hover:text-white transition-all">EN</button>
-    <button id="btn-pl" onclick="setLanguage('pl')" class="px-3 py-1 text-xs font-bold border border-[#2d463e] rounded hover:bg-[#2d463e] hover:text-white transition-all">PL</button>
+  <div class="fixed top-6 right-6 z-50 flex gap-2 text-[10px] font-bold">
+    <button id="btn-en" onclick="setLanguage('en')" class="px-3 py-1 border border-[#2d463e] rounded hover:bg-[#2d463e] hover:text-white transition-all">EN</button>
+    <button id="btn-pl" onclick="setLanguage('pl')" class="px-3 py-1 border border-[#2d463e] rounded hover:bg-[#2d463e] hover:text-white transition-all">PL</button>
   </div>
 
   <header class="w-full max-w-4xl pt-20 pb-12 px-6 text-center fade-in">
     <div class="relative inline-block mb-8">
-      <img src="https://images.unsplash.com/photo-1515696955266-4f67e13219e8?q=80&w=600&auto=format&fit=crop" alt="Matcha" class="w-40 h-40 object-cover rounded-full shadow-2xl border-4 border-white">
+      <img src="https://images.unsplash.com/photo-1515696955266-4f67e13219e8?q=80&w=600&auto=format&fit=crop" 
+           alt="Matcha" class="w-40 h-40 object-cover rounded-full shadow-2xl border-4 border-white">
     </div>
-    <h1 id="ui-title" class="text-4xl md:text-5xl font-black tracking-tighter mb-4 text-[#2d463e]">Zen Matcha Analyzer</h1>
-    <p id="ui-subtitle" class="text-sm uppercase tracking-[0.3em] opacity-60">Purity • Tradition • Intelligence</p>
+    <h1 id="ui-title" class="text-4xl md:text-5xl font-black tracking-tighter mb-4">Zen Matcha Analyzer</h1>
+    <p id="ui-subtitle" class="text-sm uppercase tracking-[0.3em] opacity-60 italic">Purity • Tradition • Strictness</p>
   </header>
 
   <main class="w-full max-w-md px-6 pb-20 fade-in" style="animation-delay: 0.3s;">
@@ -77,14 +63,11 @@
       
       <div id="drop-zone" class="border border-dashed border-[#2d463e]/20 py-12 text-center hover:bg-[#fcfbf9] transition-colors cursor-pointer group">
         <input type="file" id="photo-upload" class="hidden" accept="image/*">
-        <div class="mb-4 text-[#2d463e]/30 group-hover:text-[#2d463e] transition-colors">
-          <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-        </div>
         <p id="ui-upload-text" class="text-xs tracking-widest uppercase font-medium">Select Matcha Photo</p>
       </div>
 
       <div id="preview-container" class="mt-8 hidden w-full flex justify-center bg-[#f8f5f0] p-2 rounded-sm border border-[#e5e1d8]">
-        <img id="preview-img" class="w-full max-h-[40vh] object-contain rounded-sm grayscale-[20%] hover:grayscale-0 transition-all">
+        <img id="preview-img" class="w-full max-h-[40vh] object-contain rounded-sm transition-all shadow-inner">
       </div>
 
       <button id="grade-btn" class="w-full mt-8 bg-[#2d463e] text-[#f8f5f0] py-4 text-sm tracking-[0.2em] font-bold hover:bg-[#1d2f29] transition-all disabled:opacity-50 z-20 relative">
@@ -100,16 +83,30 @@
   <script>
     const translations = {
       en: {
-        title: "Zen Matcha Analyzer", subtitle: "Purity • Tradition • Intelligence", upload: "Select Matcha Photo",
+        title: "Zen Matcha Analyzer", subtitle: "Purity • Tradition • Strictness", upload: "Select Matcha Photo",
         btn: "ANALYZE QUALITY", loading: "Consulting the Master...", error: "Connection Error",
         noFile: "Please select a photo first.",
-        prompt: "Act as a Japanese tea master. Analyze the color and foam of this matcha. Tell me if it's Ceremonial or Culinary grade. Keep it concise in English using bullet points."
+        prompt: `You are an extremely strict Japanese Matcha Master. Follow these steps:
+                 STEP 1: IDENTITY CHECK. Is this real Matcha? If the image is Black Tea, Coffee, food, or anything else, STOP and say: "This is not Matcha. I only analyze Japanese Matcha."
+                 STEP 2: IF IT IS MATCHA, analyze:
+                 - COLOR (1-10): Be brutal. Vibrant electric green = 10. Yellow/Brown/Dull = 1.
+                 - FROTH (1-10): Fine bubbles = 10. Big soapy bubbles or no foam = 0.
+                 - TEXTURE: Describe if it looks silky or grainy.
+                 STEP 3: VERDICT. 9-10: Competition Grade | 7-8: Ceremonial | 5-6: Daily Grade | Below 5: CULINARY ONLY. 
+                 Be very critical. If it's bad, tell the user why it is disappointing.`
       },
       pl: {
-        title: "Zen Matcha Analyzer", subtitle: "Czystość • Tradycja • Inteligencja", upload: "Wybierz zdjęcie Matchy",
+        title: "Zen Matcha Analyzer", subtitle: "Czystość • Tradycja • Surowość", upload: "Wybierz zdjęcie Matchy",
         btn: "OCEŃ JAKOŚĆ", loading: "Konsultacja z Mistrzem...", error: "Błąd połączenia",
         noFile: "Najpierw wybierz zdjęcie.",
-        prompt: "Działaj jako japoński mistrz herbaty. Przeanalizuj kolor i piankę tej matchy. Powiedz mi, czy to jakość ceremonialna czy kulinarna. Odpowiedz zwięźle w języku polskim, używając wypunktowań."
+        prompt: `Jesteś ekstremalnie surowym japońskim Mistrzem Matchy. Wykonaj te kroki:
+                 KROK 1: SPRAWDZENIE TOŻSAMOŚCI. Czy to prawdziwa Matcha? Jeśli to czarna herbata, kawa, jedzenie lub cokolwiek innego, ZATRZYMAJ SIĘ i powiedz: "To nie jest Matcha. Oceniam tylko japońską Matchę."
+                 KROK 2: JEŚLI TO MATCHA, oceń:
+                 - KOLOR (1-10): Bądź brutalny. Żywa zieleń = 10. Żółty/Brązowy/Matowy = 1.
+                 - PIANKA (1-10): Drobne pęcherzyki = 10. Duże, mydlane lub brak piany = 0.
+                 - TEKSTURA: Opisz, czy wygląda na jedwabistą, czy ziarnistą.
+                 KROK 3: WERDYKT. 9-10: Klasa Konkursowa | 7-8: Ceremonialna | 5-6: Codzienna | Poniżej 5: TYLKO KULINARNA.
+                 Bądź krytyczny. Jeśli jest słaba, powiedz użytkownikowi, dlaczego jest rozczarowująca.`
       }
     };
 
@@ -174,22 +171,16 @@
         });
 
         const data = await response.json();
-        
-        // 🚨 如果有錯誤，把真實的系統報錯丟給 Catch 區塊
-        if (!response.ok) {
-           throw new Error(data.error || data.details?.message || "Unknown backend error");
-        }
+        if (!response.ok) throw new Error(data.error || "Server Error");
 
-        aiContent.innerHTML = `<div class="fade-in">${data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>')}</div>`;
+        aiContent.innerHTML = `<div class="fade-in font-medium">${data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>')}</div>`;
         resultDiv.classList.remove('hidden');
 
       } catch (err) {
-        // 🟢 這裡會把真實死因用明顯的紅色框框印在畫面上！
-        console.error("Full error:", err);
         aiContent.innerHTML = `
-          <div class="text-red-700 font-bold mb-3">❌ ${translations[currentLang].error}</div>
-          <div class="text-xs bg-red-50 p-4 rounded border border-red-200 text-red-800 break-words font-mono">
-            <strong>System Log:</strong><br>${err.message}
+          <div class="text-red-700 font-bold mb-2">❌ ${translations[currentLang].error}</div>
+          <div class="text-[10px] bg-red-50 p-2 rounded border border-red-100 text-red-900 font-mono break-words">
+            Log: ${err.message}
           </div>
         `;
         resultDiv.classList.remove('hidden');
