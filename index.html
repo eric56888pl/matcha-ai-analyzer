@@ -3,34 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Zen Matcha Master Analyzer</title>
+  <title>Zen Matcha Analyzer Pro</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500;900&display=swap" rel="stylesheet">
   <style>
-    body {
-      background-color: #f8f5f0; 
-      font-family: 'Noto Sans JP', sans-serif;
-      color: #2d463e;
-      overflow-x: hidden;
-      position: relative;
-    }
+    body { background-color: #f8f5f0; font-family: 'Noto Sans JP', sans-serif; color: #2d463e; overflow-x: hidden; position: relative; }
     .fade-in { animation: fadeIn 1.5s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* 🌸 櫻花粉色雨 🌸 */
-    .sakura {
-      position: fixed; top: -10%; background: #ffb7c5; 
-      border-radius: 100% 0 100% 100%; opacity: 0.6; 
-      pointer-events: none; z-index: 0; animation: fall linear infinite;
-      box-shadow: 0 0 5px rgba(255, 183, 197, 0.3);
-    }
+    .sakura { position: fixed; top: -10%; background: #ffb7c5; border-radius: 100% 0 100% 100%; opacity: 0.6; pointer-events: none; z-index: 0; animation: fall linear infinite; box-shadow: 0 0 5px rgba(255, 183, 197, 0.3); }
     @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
-
-    .loader {
-      border: 2px solid #e5e7eb; border-top: 2px solid #2d463e;
-      border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite;
-      display: inline-block; vertical-align: middle;
-    }
+    .loader { border: 2px solid #e5e7eb; border-top: 2px solid #2d463e; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
@@ -40,9 +22,6 @@
   <div class="sakura" style="width:12px;height:16px;left:25%;animation-duration:12s;animation-delay:1s;"></div>
   <div class="sakura" style="width:8px;height:12px;left:45%;animation-duration:10s;animation-delay:3s;"></div>
   <div class="sakura" style="width:14px;height:18px;left:65%;animation-duration:15s;animation-delay:2s;"></div>
-  <div class="sakura" style="width:10px;height:14px;left:85%;animation-duration:9s;animation-delay:4s;"></div>
-  <div class="sakura" style="width:11px;height:15px;left:15%;animation-duration:14s;animation-delay:0.5s;"></div>
-  <div class="sakura" style="width:9px;height:13px;left:95%;animation-duration:10s;animation-delay:7s;"></div>
 
   <div class="fixed top-6 right-6 z-50 flex gap-2 text-[10px] font-bold">
     <button id="btn-en" onclick="setLanguage('en')" class="px-3 py-1 border border-[#2d463e] rounded hover:bg-[#2d463e] hover:text-white transition-all">EN</button>
@@ -50,12 +29,8 @@
   </div>
 
   <header class="w-full max-w-4xl pt-20 pb-12 px-6 text-center fade-in">
-    <div class="relative inline-block mb-8">
-      <img src="https://images.unsplash.com/photo-1515696955266-4f67e13219e8?q=80&w=600&auto=format&fit=crop" 
-           alt="Matcha" class="w-40 h-40 object-cover rounded-full shadow-2xl border-4 border-white">
-    </div>
-    <h1 id="ui-title" class="text-4xl md:text-5xl font-black tracking-tighter mb-4">Zen Matcha Analyzer</h1>
-    <p id="ui-subtitle" class="text-sm uppercase tracking-[0.3em] opacity-60 italic">Purity • Tradition • Strictness</p>
+    <h1 id="ui-title" class="text-4xl md:text-5xl font-black tracking-tighter mb-4 text-[#2d463e]">Zen Matcha Analyzer</h1>
+    <p id="ui-subtitle" class="text-sm uppercase tracking-[0.3em] opacity-60">Purity • Truth • Intelligence</p>
   </header>
 
   <main class="w-full max-w-md px-6 pb-20 fade-in" style="animation-delay: 0.3s;">
@@ -63,14 +38,14 @@
       
       <div id="drop-zone" class="border border-dashed border-[#2d463e]/20 py-12 text-center hover:bg-[#fcfbf9] transition-colors cursor-pointer group">
         <input type="file" id="photo-upload" class="hidden" accept="image/*">
-        <p id="ui-upload-text" class="text-xs tracking-widest uppercase font-medium">Select Matcha Photo</p>
+        <p id="ui-upload-text" class="text-xs tracking-widest uppercase font-medium">Select Photo</p>
       </div>
 
       <div id="preview-container" class="mt-8 hidden w-full flex justify-center bg-[#f8f5f0] p-2 rounded-sm border border-[#e5e1d8]">
-        <img id="preview-img" class="w-full max-h-[40vh] object-contain rounded-sm transition-all shadow-inner">
+        <img id="preview-img" class="w-full max-h-[45vh] object-contain rounded-sm transition-all shadow-inner">
       </div>
 
-      <button id="grade-btn" class="w-full mt-8 bg-[#2d463e] text-[#f8f5f0] py-4 text-sm tracking-[0.2em] font-bold hover:bg-[#1d2f29] transition-all disabled:opacity-50 z-20 relative">
+      <button id="grade-btn" class="w-full mt-8 bg-[#2d463e] text-[#f8f5f0] py-4 text-sm tracking-[0.2em] font-bold hover:bg-[#1d2f29] transition-all disabled:opacity-50">
         <span id="ui-btn-text">ANALYZE QUALITY</span>
       </button>
 
@@ -83,54 +58,49 @@
   <script>
     const translations = {
       en: {
-        title: "Zen Matcha Analyzer", subtitle: "Purity • Tradition • Strictness", upload: "Select Matcha Photo",
+        title: "Zen Matcha Analyzer", subtitle: "Purity • Truth • Intelligence", upload: "Select Photo",
         btn: "ANALYZE QUALITY", loading: "Consulting the Master...", error: "Connection Error",
         noFile: "Please select a photo first.",
-        prompt: `You are an extremely strict Japanese Matcha Master. Follow these steps:
-                 STEP 1: IDENTITY CHECK. Is this real Matcha? If the image is Black Tea, Coffee, food, or anything else, STOP and say: "This is not Matcha. I only analyze Japanese Matcha."
-                 STEP 2: IF IT IS MATCHA, analyze:
-                 - COLOR (1-10): Be brutal. Vibrant electric green = 10. Yellow/Brown/Dull = 1.
-                 - FROTH (1-10): Fine bubbles = 10. Big soapy bubbles or no foam = 0.
-                 - TEXTURE: Describe if it looks silky or grainy.
-                 STEP 3: VERDICT. 9-10: Competition Grade | 7-8: Ceremonial | 5-6: Daily Grade | Below 5: CULINARY ONLY. 
-                 Be very critical. If it's bad, tell the user why it is disappointing.`
+        // 🟢 嚴格身分檢查：道具不等於本質
+        prompt: `You are a skeptical and extremely strict Japanese Tea Master. 
+                 STEP 1: SUBSTANCE CHECK. Look at the liquid. 
+                 - Is it a green, opaque suspension characteristic of powdered matcha? 
+                 - DO NOT be fooled by props like whisks or bowls. If the liquid is clear, brown, red, or looks like coffee, STOP and say: "This is not Matcha. A true master is not fooled by props."
+                 STEP 2: IF VERIFIED, analyze:
+                 - COLOR (1-10): Vibrant jade = 10. Dull/Yellowish = 1. Deduct points for oxidation.
+                 - FROTH (1-10): Micro-bubbles = 10. Large/Soapy = 0.
+                 - TEXTURE: Silky or grainy?
+                 STEP 3: FINAL VERDICT. Be brutally honest. If it's culinary grade, say it is unfit for a ceremony.`
       },
       pl: {
-        title: "Zen Matcha Analyzer", subtitle: "Czystość • Tradycja • Surowość", upload: "Wybierz zdjęcie Matchy",
+        title: "Zen Matcha Analyzer", subtitle: "Czystość • Prawda • Inteligencja", upload: "Wybierz zdjęcie",
         btn: "OCEŃ JAKOŚĆ", loading: "Konsultacja z Mistrzem...", error: "Błąd połączenia",
         noFile: "Najpierw wybierz zdjęcie.",
-        prompt: `Jesteś ekstremalnie surowym japońskim Mistrzem Matchy. Wykonaj te kroki:
-                 KROK 1: SPRAWDZENIE TOŻSAMOŚCI. Czy to prawdziwa Matcha? Jeśli to czarna herbata, kawa, jedzenie lub cokolwiek innego, ZATRZYMAJ SIĘ i powiedz: "To nie jest Matcha. Oceniam tylko japońską Matchę."
-                 KROK 2: JEŚLI TO MATCHA, oceń:
-                 - KOLOR (1-10): Bądź brutalny. Żywa zieleń = 10. Żółty/Brązowy/Matowy = 1.
-                 - PIANKA (1-10): Drobne pęcherzyki = 10. Duże, mydlane lub brak piany = 0.
-                 - TEKSTURA: Opisz, czy wygląda na jedwabistą, czy ziarnistą.
-                 KROK 3: WERDYKT. 9-10: Klasa Konkursowa | 7-8: Ceremonialna | 5-6: Codzienna | Poniżej 5: TYLKO KULINARNA.
-                 Bądź krytyczny. Jeśli jest słaba, powiedz użytkownikowi, dlaczego jest rozczarowująca.`
+        // 🟢 Surowa weryfikacja po polsku
+        prompt: `Jesteś sceptycznym i niezwykle surowym japońskim Mistrzem Herbaty.
+                 KROK 1: KONTROLA SUBSTANCJI. Spójrz na płyn.
+                 - Czy to zielona, nieprzezroczysta zawiesina charakterystyczna dla sproszkowanej matchy?
+                 - NIE DAJ SIĘ zwieść rekwizytom, takim jak pędzle czy miseczki. Jeśli płyn jest klarowny, brązowy, czerwony lub wygląda jak kawa, ZATRZYMAJ SIĘ i powiedz: "To nie jest Matcha. Prawdziwy mistrz nie daje się zwieść rekwizytom."
+                 KROK 2: JEŚLI ZWERYFIKOWANO, oceń:
+                 - KOLOR (1-10): Żywy nefryt = 10. Matowy/Żółtawy = 1. Odejmij punkty za utlenienie.
+                 - PIANKA (1-10): Mikropęcherzyki = 10. Duże/Mydlane = 0.
+                 - TEKSTURA: Jedwabista czy ziarnista?
+                 KROK 3: WERDYKT. Bądź brutalnie szczery. Jeśli to jakość kulinarna, powiedz, że nie nadaje się do ceremonii.`
       }
     };
 
     let currentLang = 'en';
-
     function setLanguage(lang) {
       currentLang = lang;
       document.getElementById('ui-title').textContent = translations[lang].title;
       document.getElementById('ui-subtitle').textContent = translations[lang].subtitle;
       document.getElementById('ui-upload-text').textContent = translations[lang].upload;
       document.getElementById('ui-btn-text').textContent = translations[lang].btn;
-      
-      document.getElementById('btn-en').style.background = lang === 'en' ? '#2d463e' : 'transparent';
-      document.getElementById('btn-en').style.color = lang === 'en' ? '#fff' : '#2d463e';
-      document.getElementById('btn-pl').style.background = lang === 'pl' ? '#2d463e' : 'transparent';
-      document.getElementById('btn-pl').style.color = lang === 'pl' ? '#fff' : '#2d463e';
     }
-
     setLanguage('en');
 
     const fileInput = document.getElementById('photo-upload');
-    const dropZone = document.getElementById('drop-zone');
-    dropZone.onclick = () => fileInput.click();
-
+    document.getElementById('drop-zone').onclick = () => fileInput.click();
     fileInput.onchange = (e) => {
       const file = e.target.files[0];
       if (file) {
@@ -142,8 +112,7 @@
 
     document.getElementById('grade-btn').onclick = async () => {
       const file = fileInput.files[0];
-      if (!file) return alert(translations[currentLang].noFile);
-
+      if (!file) return;
       const btn = document.getElementById('grade-btn');
       const btnText = document.getElementById('ui-btn-text');
       const resultDiv = document.getElementById('result');
@@ -154,35 +123,19 @@
       resultDiv.classList.add('hidden');
 
       try {
-        const base64Img = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result.split(',')[1]);
-          reader.readAsDataURL(file);
+        const reader = new FileReader();
+        const base64Img = await new Promise(r => { reader.onload = () => r(reader.result.split(',')[1]); reader.readAsDataURL(file); });
+        const res = await fetch("/api/analyze", { 
+          method: "POST", 
+          headers: { "Content-Type": "application/json" }, 
+          body: JSON.stringify({ promptText: translations[currentLang].prompt, mimeType: file.type, imageBase64: base64Img }) 
         });
-
-        const response = await fetch("/api/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            promptText: translations[currentLang].prompt,
-            mimeType: file.type,
-            imageBase64: base64Img
-          })
-        });
-
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Server Error");
-
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
         aiContent.innerHTML = `<div class="fade-in font-medium">${data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>')}</div>`;
         resultDiv.classList.remove('hidden');
-
       } catch (err) {
-        aiContent.innerHTML = `
-          <div class="text-red-700 font-bold mb-2">❌ ${translations[currentLang].error}</div>
-          <div class="text-[10px] bg-red-50 p-2 rounded border border-red-100 text-red-900 font-mono break-words">
-            Log: ${err.message}
-          </div>
-        `;
+        aiContent.innerHTML = `<span class="text-red-700 font-bold">${translations[currentLang].error}</span><br><small>${err.message}</small>`;
         resultDiv.classList.remove('hidden');
       } finally {
         btn.disabled = false;
