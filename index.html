@@ -78,14 +78,16 @@
         title: "Zen Matcha Analyzer", subtitle: "Purity • Truth • Strictness", upload: "Select Photo", btn: "ANALYZE QUALITY", error: "Connection Error", noFile: "Select a photo.",
         loadingQuotes: ["Ichi-go Ichi-e. One moment, one encounter.", "Scanning for vibrant jade powder...", "Checking opacity and suspension...", "Verifying if this is true Matcha...", "Analyzing froth density..."],
         prompt: `You are an extremely strict Japanese Matcha Sommelier. 
-                 STEP 1: SUBSTANCE IDENTIFICATION. 
-                 - Is it a green, OPAQUE (cloudy) suspension? (Matcha liquid)
-                 - Is it a vibrant green, FINE powder? (Matcha powder)
-                 - If it is CLEAR/TRANSLUCENT liquid (like Sencha/Green tea bags) or RED/BROWN (Black tea/Coffee), STOP immediately and say: "This is not Matcha. A master only analyzes true powdered Matcha."
-                 STEP 2: IF VERIFIED, analyze:
-                 - COLOR (1-10): "COLOR Score: X/10". Be brutal. 10 = Electric Green, 1 = Yellowish/Translucent.
-                 - FROTH/TEXTURE (1-10): "QUALITY Score: X/10". Tiny bubbles or fine powder = 10.
-                 STEP 3: FINAL VERDICT. Be honest. If it is culinary grade, state why it is unfit for ceremony.`
+                 STEP 1: IDENTITY CHECK. (Matcha powder or opaque suspension?)
+                 STEP 2: ANALYSIS.
+                 - COLOR Score: X/10 (10=Electric Jade, 1=Dull Yellow).
+                 - QUALITY Score: X/10 (10=Fine powder/Micro-bubbles, 1=Grainy/Soapy).
+                 STEP 3: VERDICT CATEGORY:
+                 - 9-10: [TOP CEREMONIAL] Rare masterpiece quality.
+                 - 7-8: [PREMIUM DAILY] High-quality tea, fit for casual ceremony.
+                 - 5-6: [STANDARD] Good for lattes or daily drinking.
+                 - BELOW 5: [CULINARY] Strictly for baking only. 
+                 Be honest but distinguish clearly between 'High Quality Daily' and 'Culinary'.`
       },
       pl: {
         title: "Zen Matcha Analyzer", subtitle: "Czystość • Prawda • Surowość", upload: "Wybierz zdjęcie", btn: "OCEŃ JAKOŚĆ", error: "Błąd połączenia", noFile: "Wybierz zdjęcie.",
