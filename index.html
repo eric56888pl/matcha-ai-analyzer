@@ -10,10 +10,24 @@
     body { background-color: #f8f5f0; font-family: 'Noto Sans JP', sans-serif; color: #2d463e; overflow-x: hidden; position: relative; }
     .fade-in { animation: fadeIn 1.5s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* 🌸 櫻花雨 🌸 */
     .sakura { position: fixed; top: -10%; background: #ffb7c5; border-radius: 100% 0 100% 100%; opacity: 0.6; pointer-events: none; z-index: 0; animation: fall linear infinite; box-shadow: 0 0 5px rgba(255, 183, 197, 0.3); }
     @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+    
     .loader { border: 2px solid #e5e7eb; border-top: 2px solid #2d463e; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* ✨ 新增：分數顏色標籤 ✨ */
+    .score-tag {
+      display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: bold; color: white; margin-left: 5px; font-size: 0.8em; vertical-align: middle;
+    }
+    .score-high { background-color: #A8C66C; box-shadow: 0 0 5px rgba(168, 198, 108, 0.5); } /* 金綠色/翡翠 */
+    .score-low { background-color: #8B7355; } /* 枯木褐色 */
+    .score-mid { background-color: #2d463e; } /* 預設深綠色 */
+    
+    /* 載入語錄字體稍微淡一點 */
+    #ui-loading-quote { opacity: 0.7; font-size: 0.9em; font-style: italic; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center">
@@ -22,6 +36,7 @@
   <div class="sakura" style="width:12px;height:16px;left:25%;animation-duration:12s;animation-delay:1s;"></div>
   <div class="sakura" style="width:8px;height:12px;left:45%;animation-duration:10s;animation-delay:3s;"></div>
   <div class="sakura" style="width:14px;height:18px;left:65%;animation-duration:15s;animation-delay:2s;"></div>
+  <div class="sakura" style="width:10px;height:14px;left:85%;animation-duration:9s;animation-delay:4s;"></div>
 
   <div class="fixed top-6 right-6 z-50 flex gap-2 text-[10px] font-bold">
     <button id="btn-en" onclick="setLanguage('en')" class="px-3 py-1 border border-[#2d463e] rounded hover:bg-[#2d463e] hover:text-white transition-all">EN</button>
@@ -42,12 +57,17 @@
       </div>
 
       <div id="preview-container" class="mt-8 hidden w-full flex justify-center bg-[#f8f5f0] p-2 rounded-sm border border-[#e5e1d8]">
-        <img id="preview-img" class="w-full max-h-[45vh] object-contain rounded-sm transition-all shadow-inner">
+        <img id="preview-img" class="w-full max-h-[45vh] object-contain rounded-sm transition-all shadow-inner bg-white">
       </div>
 
-      <button id="grade-btn" class="w-full mt-8 bg-[#2d463e] text-[#f8f5f0] py-4 text-sm tracking-[0.2em] font-bold hover:bg-[#1d2f29] transition-all disabled:opacity-50">
+      <button id="grade-btn" class="w-full mt-8 bg-[#2d463e] text-[#f8f5f0] py-4 text-sm tracking-[0.2em] font-bold hover:bg-[#1d2f29] transition-all disabled:opacity-50 z-20 relative">
         <span id="ui-btn-text">ANALYZE QUALITY</span>
       </button>
+      
+      <div id="loading-area" class="mt-4 text-center hidden">
+        <span class="loader mr-2"></span>
+        <span id="ui-loading-quote">Consulting the Master...</span>
+      </div>
 
       <div id="result" class="mt-8 pt-8 border-t border-[#f0eee9] hidden">
         <div id="ai-content" class="text-sm leading-relaxed text-[#4a5551]"></div>
@@ -59,33 +79,41 @@
     const translations = {
       en: {
         title: "Zen Matcha Analyzer", subtitle: "Purity • Truth • Intelligence", upload: "Select Photo",
-        btn: "ANALYZE QUALITY", loading: "Consulting the Master...", error: "Connection Error",
-        noFile: "Please select a photo first.",
-        // 🟢 嚴格身分檢查：道具不等於本質
-        prompt: `You are a skeptical and extremely strict Japanese Tea Master. 
-                 STEP 1: SUBSTANCE CHECK. Look at the liquid. 
-                 - Is it a green, opaque suspension characteristic of powdered matcha? 
-                 - DO NOT be fooled by props like whisks or bowls. If the liquid is clear, brown, red, or looks like coffee, STOP and say: "This is not Matcha. A true master is not fooled by props."
-                 STEP 2: IF VERIFIED, analyze:
-                 - COLOR (1-10): Vibrant jade = 10. Dull/Yellowish = 1. Deduct points for oxidation.
-                 - FROTH (1-10): Micro-bubbles = 10. Large/Soapy = 0.
-                 - TEXTURE: Silky or grainy?
-                 STEP 3: FINAL VERDICT. Be brutally honest. If it's culinary grade, say it is unfit for a ceremony.`
+        btn: "ANALYZE QUALITY", error: "Connection Error", noFile: "Select a photo.",
+        // 🟢 新增：英文語錄陣列 🟢
+        loadingQuotes: [
+          "Ichi-go Ichi-e. One moment, one encounter.",
+          "Wabi-sabi: Finding beauty in imperfection.",
+          "The first sip is medicine; the second is pure pleasure.",
+          "Matcha is not just tea; it is a way of life.",
+          "Consulting the tea spirits...",
+          "Measuring the vibrant electric green..."
+        ],
+        prompt: `You are a skeptical and extremely strict Japanese Tea Master Sommelier. 
+                 STEP 1: SUBSTANCE CHECK. Look at the liquid. Is it a green, opaque suspension characteristic of powdered matcha? DO NOT be fooled by props like whisks. Only proceed if Verified.
+                 STEP 2: IF VERIFIED, analyze and PROVIDE 1-10 SCORES:
+                 - COLOR (1-10): Be brutal. Use format "COLOR Score: X/10". Vibrant electric green = 10.
+                 - FROTH (1-10): Use format "FROTH Score: X/10". Fine micro-bubbles = 10.
+                 STEP 3: FINAL VERDICT. Be brutally honest. Describe if it is Ceremonial, Daily, or Strictly Culinary.`
       },
       pl: {
         title: "Zen Matcha Analyzer", subtitle: "Czystość • Prawda • Inteligencja", upload: "Wybierz zdjęcie",
-        btn: "OCEŃ JAKOŚĆ", loading: "Konsultacja z Mistrzem...", error: "Błąd połączenia",
-        noFile: "Najpierw wybierz zdjęcie.",
-        // 🟢 Surowa weryfikacja po polsku
-        prompt: `Jesteś sceptycznym i niezwykle surowym japońskim Mistrzem Herbaty.
-                 KROK 1: KONTROLA SUBSTANCJI. Spójrz na płyn.
-                 - Czy to zielona, nieprzezroczysta zawiesina charakterystyczna dla sproszkowanej matchy?
-                 - NIE DAJ SIĘ zwieść rekwizytom, takim jak pędzle czy miseczki. Jeśli płyn jest klarowny, brązowy, czerwony lub wygląda jak kawa, ZATRZYMAJ SIĘ i powiedz: "To nie jest Matcha. Prawdziwy mistrz nie daje się zwieść rekwizytom."
-                 KROK 2: JEŚLI ZWERYFIKOWANO, oceń:
-                 - KOLOR (1-10): Żywy nefryt = 10. Matowy/Żółtawy = 1. Odejmij punkty za utlenienie.
-                 - PIANKA (1-10): Mikropęcherzyki = 10. Duże/Mydlane = 0.
-                 - TEKSTURA: Jedwabista czy ziarnista?
-                 KROK 3: WERDYKT. Bądź brutalnie szczery. Jeśli to jakość kulinarna, powiedz, że nie nadaje się do ceremonii.`
+        btn: "OCEŃ JAKOŚĆ", error: "Błąd połączenia", noFile: "Wybierz zdjęcie.",
+        // 🟢 新增：波蘭文語錄陣列 🟢
+        loadingQuotes: [
+          "Ichi-go Ichi-e. Jedna chwila, jedno spotkanie.",
+          "Wabi-sabi: Odnajdywanie piękna w niedoskonałości.",
+          "Pierwszy łyk to lekarstwo; drugi to czysta przyjemność.",
+          "Matcha to nie tylko herbata; to styl życia.",
+          "Konsultacja z duchami herbaty...",
+          "Mierzenie intensywności zieleni..."
+        ],
+        prompt: `Jesteś sceptycznym i niezwykle surowym japońskim sommelierem herbaty.
+                 KROK 1: KONTROLA SUBSTANCJI. Spójrz na płyn. Czy to zielona, nieprzezroczysta zawiesina charakterystyczna dla sproszkowanej matchy? NIE DAJ SIĘ zwieść rekwizytom. Kontynuuj tylko po weryfikacji.
+                 KROK 2: JEŚLI ZWERYFIKOWANO, oceń i PODAJ WYNIKI 1-10:
+                 - KOLOR (1-10): Bądź brutalny. Użyj formatu "Wynik KOLORU: X/10". Żywa zieleń = 10.
+                 - PIANKA (1-10): Użyj formatu "Wynik PIANKI: X/10". Mikropęcherzyki = 10.
+                 KROK 3: WERDYKT. Bądź brutalnie szczery. Opisz, czy to jakość ceremonialna, codzienna, czy wyłącznie kulinarna.`
       }
     };
 
@@ -110,6 +138,27 @@
       }
     };
 
+    // 🟢 新增：分數解析器函數 🟢
+    function processAiResponse(text) {
+      // 搜尋任何 "X/10" 的格式
+      const regex = /(\d+)\/10/g;
+      
+      // 使用更強大的 replace 函數來加入 HTML 標籤
+      const newText = text.replace(regex, (match, score) => {
+        const scoreNum = parseInt(score);
+        let colorClass = 'score-mid';
+        
+        // 🟢 這裡定義顏色邏輯：金綠 vs 枯木褐色 🟢
+        if (scoreNum >= 9) colorClass = 'score-high'; // 9 或 10
+        else if (scoreNum < 5) colorClass = 'score-low'; // 低於 5
+        
+        // 返回包含分數和顏色標籤的 HTML
+        return `<span class="score-tag ${colorClass}">${match}</span>`;
+      });
+      
+      return `<div class="fade-in font-medium">${newText.replace(/\n/g, '<br>')}</div>`;
+    }
+
     document.getElementById('grade-btn').onclick = async () => {
       const file = fileInput.files[0];
       if (!file) return;
@@ -117,29 +166,45 @@
       const btnText = document.getElementById('ui-btn-text');
       const resultDiv = document.getElementById('result');
       const aiContent = document.getElementById('ai-content');
+      const loadingArea = document.getElementById('loading-area');
+      const loadingQuoteText = document.getElementById('ui-loading-quote');
 
+      // 載入狀態
       btn.disabled = true;
-      btnText.innerHTML = `<span class="loader"></span> ${translations[currentLang].loading}`;
+      btnText.classList.add('hidden');
+      loadingArea.classList.remove('hidden');
       resultDiv.classList.add('hidden');
+      
+      // 🟢 隨機選擇一句載入語錄 🟢
+      const quotes = translations[currentLang].loadingQuotes;
+      loadingQuoteText.textContent = quotes[Math.floor(Math.random() * quotes.length)];
 
       try {
         const reader = new FileReader();
         const base64Img = await new Promise(r => { reader.onload = () => r(reader.result.split(',')[1]); reader.readAsDataURL(file); });
+        
+        // 發送請求
         const res = await fetch("/api/analyze", { 
           method: "POST", 
           headers: { "Content-Type": "application/json" }, 
           body: JSON.stringify({ promptText: translations[currentLang].prompt, mimeType: file.type, imageBase64: base64Img }) 
         });
+        
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
-        aiContent.innerHTML = `<div class="fade-in font-medium">${data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>')}</div>`;
+        
+        // 🟢 使用分數解析器處理 AI 的文字回答 🟢
+        aiContent.innerHTML = processAiResponse(data.candidates[0].content.parts[0].text);
         resultDiv.classList.remove('hidden');
+        
       } catch (err) {
-        aiContent.innerHTML = `<span class="text-red-700 font-bold">${translations[currentLang].error}</span><br><small>${err.message}</small>`;
+        aiContent.innerHTML = `<span class="text-red-700 font-bold">❌ ${translations[currentLang].error}</span><br><small class="opacity-70">${err.message}</small>`;
         resultDiv.classList.remove('hidden');
       } finally {
+        // 恢復按鈕狀態
         btn.disabled = false;
-        btnText.textContent = translations[currentLang].btn;
+        btnText.classList.remove('hidden');
+        loadingArea.classList.add('hidden');
       }
     };
   </script>
