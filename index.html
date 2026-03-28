@@ -10,15 +10,21 @@
     body { background-color: #f8f5f0; font-family: 'Noto Sans JP', sans-serif; color: #2d463e; overflow-x: hidden; position: relative; }
     .fade-in { animation: fadeIn 1.5s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* 🌸 櫻花粉色雨 🌸 */
     .sakura { position: fixed; top: -10%; background: #ffb7c5; border-radius: 100% 0 100% 100%; opacity: 0.6; pointer-events: none; z-index: 0; animation: fall linear infinite; box-shadow: 0 0 5px rgba(255, 183, 197, 0.3); }
     @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+    
     .loader { border: 2px solid #e5e7eb; border-top: 2px solid #2d463e; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .score-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: bold; color: white; margin-left: 5px; font-size: 0.8em; vertical-align: middle; }
-    .score-high { background-color: #A8C66C; box-shadow: 0 0 5px rgba(168, 198, 108, 0.5); }
-    .score-low { background-color: #8B7355; }
+
+    /* ✨ 分數顏色標籤 ✨ */
+    .score-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: bold; color: white; margin-left: 5px; font-size: 0.85em; vertical-align: middle; }
+    .score-high { background-color: #A8C66C; box-shadow: 0 0 8px rgba(168, 198, 108, 0.6); } /* 金綠色 */
+    .score-low { background-color: #8B7355; } /* 枯木褐色 */
     .score-mid { background-color: #2d463e; }
-    #ui-loading-quote { opacity: 0.7; font-size: 0.9em; font-style: italic; }
+    
+    #ui-loading-quote { opacity: 0.7; font-size: 0.9em; font-style: italic; margin-top: 10px; display: block; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center">
@@ -27,6 +33,7 @@
   <div class="sakura" style="width:12px;height:16px;left:25%;animation-duration:12s;animation-delay:1s;"></div>
   <div class="sakura" style="width:8px;height:12px;left:45%;animation-duration:10s;animation-delay:3s;"></div>
   <div class="sakura" style="width:14px;height:18px;left:65%;animation-duration:15s;animation-delay:2s;"></div>
+  <div class="sakura" style="width:10px;height:14px;left:85%;animation-duration:9s;animation-delay:4s;"></div>
 
   <div class="fixed top-6 right-6 z-50 flex gap-2 text-[10px] font-bold">
     <button id="btn-en" onclick="setLanguage('en')" class="px-3 py-1 border border-[#2d463e] rounded hover:bg-[#2d463e] hover:text-white transition-all">EN</button>
@@ -35,25 +42,30 @@
 
   <header class="w-full max-w-4xl pt-20 pb-12 px-6 text-center fade-in">
     <h1 id="ui-title" class="text-4xl md:text-5xl font-black tracking-tighter mb-4 text-[#2d463e]">Zen Matcha Analyzer</h1>
-    <p id="ui-subtitle" class="text-sm uppercase tracking-[0.3em] opacity-60">Purity • Truth • Intelligence</p>
+    <p id="ui-subtitle" class="text-sm uppercase tracking-[0.3em] opacity-60">Purity • Truth • Strictness</p>
   </header>
 
   <main class="w-full max-w-md px-6 pb-20 fade-in" style="animation-delay: 0.3s;">
     <div class="bg-white p-8 rounded-sm shadow-sm border border-[#e5e1d8] relative overflow-hidden z-10">
+      
       <div id="drop-zone" class="border border-dashed border-[#2d463e]/20 py-12 text-center hover:bg-[#fcfbf9] transition-colors cursor-pointer group">
         <input type="file" id="photo-upload" class="hidden" accept="image/*">
-        <p id="ui-upload-text" class="text-xs tracking-widest uppercase font-medium">Select Photo</p>
+        <p id="ui-upload-text" class="text-xs tracking-widest uppercase font-medium">Select Matcha Photo</p>
       </div>
+
       <div id="preview-container" class="mt-8 hidden w-full flex justify-center bg-[#f8f5f0] p-2 rounded-sm border border-[#e5e1d8]">
-        <img id="preview-img" class="w-full max-h-[45vh] object-contain rounded-sm transition-all shadow-inner">
+        <img id="preview-img" class="w-full max-h-[45vh] object-contain rounded-sm shadow-inner transition-all">
       </div>
-      <button id="grade-btn" class="w-full mt-8 bg-[#2d463e] text-[#f8f5f0] py-4 text-sm tracking-[0.2em] font-bold hover:bg-[#1d2f29] transition-all disabled:opacity-50">
+
+      <button id="grade-btn" class="w-full mt-8 bg-[#2d463e] text-[#f8f5f0] py-4 text-sm tracking-[0.2em] font-bold hover:bg-[#1d2f29] transition-all disabled:opacity-50 z-20 relative">
         <span id="ui-btn-text">ANALYZE QUALITY</span>
       </button>
+
       <div id="loading-area" class="mt-4 text-center hidden">
-        <span class="loader mr-2"></span>
-        <span id="ui-loading-quote">Consulting...</span>
+        <span class="loader"></span>
+        <span id="ui-loading-quote">Consulting the Master...</span>
       </div>
+
       <div id="result" class="mt-8 pt-8 border-t border-[#f0eee9] hidden">
         <div id="ai-content" class="text-sm leading-relaxed text-[#4a5551]"></div>
       </div>
@@ -63,34 +75,30 @@
   <script>
     const translations = {
       en: {
-        title: "Zen Matcha Analyzer", subtitle: "Purity • Truth • Intelligence", upload: "Select Photo", btn: "ANALYZE QUALITY", error: "Connection Error", noFile: "Select a photo.",
-        loadingQuotes: ["Ichi-go Ichi-e.", "Seeking the vibrant green...", "Measuring opacity...", "Verifying leaf powder..."],
-        // 🟢 強化版 Prompt：加入對一般綠茶（透明液體）的區別 🟢
-        prompt: `You are an extremely strict Japanese Tea Master Sommelier.
-                 STEP 1: IDENTITY CHECK. Look at the liquid.
-                 - Real Matcha MUST be an OPAQUE (not see-through), CLOUDY green suspension.
-                 - If the liquid is CLEAR or TRANSLUCENT (like steeped Sencha or green tea bags), it is NOT Matcha.
-                 - If it is clear/translucent green tea, STOP and say: "This is steeped Green Tea, not Matcha. I only analyze powdered Matcha suspension."
-                 - Only proceed if it is cloudy leaf powder suspension.
-                 STEP 2: IF VERIFIED, analyze scores:
-                 - COLOR (1-10): "COLOR Score: X/10". Vibrant jade = 10. Yellowish/Translucent = 1.
-                 - FROTH (1-10): "FROTH Score: X/10". Fine micro-bubbles = 10.
-                 STEP 3: FINAL VERDICT. Be honest and critical.`
+        title: "Zen Matcha Analyzer", subtitle: "Purity • Truth • Strictness", upload: "Select Photo", btn: "ANALYZE QUALITY", error: "Connection Error", noFile: "Select a photo.",
+        loadingQuotes: ["Ichi-go Ichi-e. One moment, one encounter.", "Scanning for vibrant jade powder...", "Checking opacity and suspension...", "Verifying if this is true Matcha...", "Analyzing froth density..."],
+        prompt: `You are an extremely strict Japanese Matcha Sommelier. 
+                 STEP 1: SUBSTANCE IDENTIFICATION. 
+                 - Is it a green, OPAQUE (cloudy) suspension? (Matcha liquid)
+                 - Is it a vibrant green, FINE powder? (Matcha powder)
+                 - If it is CLEAR/TRANSLUCENT liquid (like Sencha/Green tea bags) or RED/BROWN (Black tea/Coffee), STOP immediately and say: "This is not Matcha. A master only analyzes true powdered Matcha."
+                 STEP 2: IF VERIFIED, analyze:
+                 - COLOR (1-10): "COLOR Score: X/10". Be brutal. 10 = Electric Green, 1 = Yellowish/Translucent.
+                 - FROTH/TEXTURE (1-10): "QUALITY Score: X/10". Tiny bubbles or fine powder = 10.
+                 STEP 3: FINAL VERDICT. Be honest. If it is culinary grade, state why it is unfit for ceremony.`
       },
       pl: {
-        title: "Zen Matcha Analyzer", subtitle: "Czystość • Prawda • Inteligencja", upload: "Wybierz zdjęcie", btn: "OCEŃ JAKOŚĆ", error: "Błąd połączenia", noFile: "Wybierz zdjęcie.",
-        loadingQuotes: ["Ichi-go Ichi-e.", "Szukanie żywej zieleni...", "Sprawdzanie mętności...", "Weryfikacja proszku liściastego..."],
-        // 🟢 Wersja polska: odróżnianie od zwykłej herbaty 🟢
-        prompt: `Jesteś niezwykle surowym japońskim sommelierem herbaty.
-                 KROK 1: KONTROLA SUBSTANCJI. Spójrz na płyn.
-                 - Prawdziwa Matcha MUSI być NIEPRZEZROCZYSTĄ (mętną) zieloną zawiesiną.
-                 - Jeśli płyn jest KLAROWNY lub PRZEZROCZYSTY (jak parzona zielona herbata/Sencha), to NIE jest Matcha.
-                 - Jeśli to klarowna zielona herbata, ZATRZYMAJ SIĘ i powiedz: "To jest parzona zielona herbata, a nie Matcha. Oceniam tylko sproszkowaną zawiesinę Matchy."
-                 - Kontynuuj tylko, jeśli widzisz mętną zawiesinę proszku.
-                 KROK 2: JEŚLI ZWERYFIKOWANO, oceń wyniki 1-10:
-                 - KOLOR (1-10): "Wynik KOLORU: X/10". Żywy nefryt = 10. Żółtawy/Przezroczysty = 1.
-                 - PIANKA (1-10): "Wynik PIANKI: X/10". Mikropęcherzyki = 10.
-                 KROK 3: WERDYKT. Bądź szczery i krytyczny.`
+        title: "Zen Matcha Analyzer", subtitle: "Czystość • Prawda • Surowość", upload: "Wybierz zdjęcie", btn: "OCEŃ JAKOŚĆ", error: "Błąd połączenia", noFile: "Wybierz zdjęcie.",
+        loadingQuotes: ["Ichi-go Ichi-e. Jedna chwila, jedno spotkanie.", "Szukanie żywego, nefrytowego proszku...", "Sprawdzanie mętności i zawiesiny...", "Weryfikacja autentyczności Matchy...", "Analizowanie gęstości pianki..."],
+        prompt: `Jesteś niezwykle surowym japońskim sommelierem Matchy.
+                 KROK 1: IDENTYFIKACJA SUBSTANCJI.
+                 - Czy to zielona, NIEPRZEZROCZYSTA (mętna) zawiesina? (Matcha płynna)
+                 - Czy to żywo zielony, DROBNY proszek? (Matcha w proszku)
+                 - Jeśli płyn jest KLAROWNY/PRZEZROCZYSTY (jak Sencha/herbata z torebki) lub CZERWONY/BRĄZOWY (Czarna herbata/Kawa), ZATRZYMAJ SIĘ i powiedz: "To nie jest Matcha. Mistrz ocenia tylko prawdziwą sproszkowaną Matchę."
+                 KROK 2: JEŚLI ZWERYFIKOWANO, oceń:
+                 - KOLOR (1-10): "Wynik KOLORU: X/10". Bądź brutalny. 10 = Żywa zieleń, 1 = Żółtawy/Przezroczysty.
+                 - PIANKA/TEKSTURA (1-10): "Wynik JAKOŚCI: X/10". Mikropęcherzyki lub drobny proszek = 10.
+                 KROK 3: WERDYKT. Bądź szczery. Jeśli to jakość kulinarna, wyjaśnij dlaczego nie nadaje się do ceremonii.`
       }
     };
 
@@ -104,51 +112,67 @@
     }
     setLanguage('en');
 
+    // 🟢 分數解析邏輯：將 X/10 轉換為彩色標籤 🟢
     function processAiResponse(text) {
       const regex = /(\d+)\/10/g;
-      const newText = text.replace(regex, (match, score) => {
-        const scoreNum = parseInt(score);
-        let colorClass = 'score-mid';
-        if (scoreNum >= 9) colorClass = 'score-high';
-        else if (scoreNum < 5) colorClass = 'score-low';
-        return `<span class="score-tag ${colorClass}">${match}</span>`;
+      const processed = text.replace(regex, (match, score) => {
+        const s = parseInt(score);
+        let cls = 'score-mid';
+        if (s >= 9) cls = 'score-high'; // 金綠
+        else if (s < 5) cls = 'score-low'; // 枯褐
+        return `<span class="score-tag ${cls}">${match}</span>`;
       });
-      return `<div class="fade-in font-medium">${newText.replace(/\n/g, '<br>')}</div>`;
+      return `<div class="fade-in font-medium">${processed.replace(/\n/g, '<br>')}</div>`;
     }
 
     const fileInput = document.getElementById('photo-upload');
     document.getElementById('drop-zone').onclick = () => fileInput.click();
     fileInput.onchange = (e) => {
       const file = e.target.files[0];
-      if (file) { document.getElementById('preview-img').src = URL.createObjectURL(file); document.getElementById('preview-container').classList.remove('hidden'); document.getElementById('result').classList.add('hidden'); }
+      if (file) {
+        document.getElementById('preview-img').src = URL.createObjectURL(file);
+        document.getElementById('preview-container').classList.remove('hidden');
+        document.getElementById('result').classList.add('hidden');
+      }
     };
 
     document.getElementById('grade-btn').onclick = async () => {
       const file = fileInput.files[0];
-      if (!file) return;
+      if (!file) return alert(translations[currentLang].noFile);
+
       const btn = document.getElementById('grade-btn');
       const btnText = document.getElementById('ui-btn-text');
       const resultDiv = document.getElementById('result');
       const aiContent = document.getElementById('ai-content');
       const loadingArea = document.getElementById('loading-area');
-      const loadingQuoteText = document.getElementById('ui-loading-quote');
 
+      // UI 載入狀態
       btn.disabled = true;
       btnText.classList.add('hidden');
       loadingArea.classList.remove('hidden');
       resultDiv.classList.add('hidden');
-      loadingQuoteText.textContent = translations[currentLang].loadingQuotes[Math.floor(Math.random() * translations[currentLang].loadingQuotes.length)];
+      
+      // 隨機載用語錄
+      const quotes = translations[currentLang].loadingQuotes;
+      document.getElementById('ui-loading-quote').textContent = quotes[Math.floor(Math.random() * quotes.length)];
 
       try {
         const reader = new FileReader();
         const base64Img = await new Promise(r => { reader.onload = () => r(reader.result.split(',')[1]); reader.readAsDataURL(file); });
-        const res = await fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ promptText: translations[currentLang].prompt, mimeType: file.type, imageBase64: base64Img }) });
+        
+        const res = await fetch("/api/analyze", { 
+          method: "POST", 
+          headers: { "Content-Type": "application/json" }, 
+          body: JSON.stringify({ promptText: translations[currentLang].prompt, mimeType: file.type, imageBase64: base64Img }) 
+        });
+
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
+
         aiContent.innerHTML = processAiResponse(data.candidates[0].content.parts[0].text);
         resultDiv.classList.remove('hidden');
       } catch (err) {
-        aiContent.innerHTML = `<span class="text-red-700 font-bold">❌ ${translations[currentLang].error}</span><br><small class="opacity-70">${err.message}</small>`;
+        aiContent.innerHTML = `<span class="text-red-700 font-bold">❌ ${translations[currentLang].error}</span><br><small class="opacity-60">${err.message}</small>`;
         resultDiv.classList.remove('hidden');
       } finally {
         btn.disabled = false;
